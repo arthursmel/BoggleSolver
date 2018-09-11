@@ -5,9 +5,7 @@ import android.content.Context;
 import android.util.Log;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -23,9 +21,9 @@ public class Dictionary {
     private static final String TAG = "Dictionary";
     private static final String DICT_FILE_NAME = "dict.txt";
     private static final char POP_STACK = '.';
+    private enum SearchOutcome { MATCH, PARTIAL_MATCH, NO_MATCH };
 
     private TrieNode root;
-
 
     public Dictionary(Context context) throws FileNotFoundException, IOException {
 
@@ -61,48 +59,49 @@ public class Dictionary {
 
         }
 
-        this.DFS(root);
-
         inputStream.close();
 
     }
 
 
-    public boolean isPartialWord() {
-        return true;
+    public boolean isPartialWord(String word) {
+        return this.search(word) == SearchOutcome.PARTIAL_MATCH;
     }
 
-    public boolean isWord() {
-        return true;
+    public boolean isWord(String word) {
+        return this.search(word) == SearchOutcome.MATCH;
     }
 
-    private void DFS(TrieNode node) {
+    private SearchOutcome search(String searchWord) {
 
-        Stack<TrieNode> stack = new Stack<>();
-        stack.push(node);
+        char[] wordArr = searchWord.toCharArray();
+        int wordArrIndex = 0;
+        char curWordChar = wordArr[wordArrIndex];
 
+        TrieNode node = this.root;
+        while ((node = node.getChildWithLetter(curWordChar)) != null) {
 
-        while (!stack.isEmpty()) {
-            node = stack.pop();
-            Log.d(TAG, node.toString());
+            if (wordArrIndex == (searchWord.length() - 1)) {
 
-            for (TrieNode n : node.getChildren()) {
-                stack.push(n);
+                if (node.isLeaf()) {
+                    return SearchOutcome.MATCH;
+                } else {
+                    return SearchOutcome.PARTIAL_MATCH;
+                }
+
             }
+
+            curWordChar = wordArr[++wordArrIndex];
+
         }
+        return SearchOutcome.NO_MATCH;
 
     }
-
 
     private static boolean isLowercaseAlphabetical(char c) {
         return c >= (int) 'a' && c <= (int) 'z';
     }
 
-
-    private interface DFSListener {
-        void onSuccess(boolean isLeaf);
-        void onFailure();
-    }
 
     private class TrieNode {
 
@@ -131,6 +130,18 @@ public class Dictionary {
 
         void addChild(TrieNode node) {
             children.add(node);
+        }
+
+        /*
+        Returns null if the child with that letter doesn't exist
+         */
+        TrieNode getChildWithLetter(char letter) {
+            for (TrieNode n : this.children) {
+                if (n.getLetter() == letter) {
+                    return n;
+                }
+            }
+            return null;
         }
 
         char getLetter() {
