@@ -62,6 +62,7 @@ public class Dictionary {
         }
 
         this.DFS(root);
+
         inputStream.close();
 
     }
@@ -76,16 +77,32 @@ public class Dictionary {
     }
 
     private void DFS(TrieNode node) {
-        for (TrieNode n : node.getChildren()) {
-            Log.d(TAG, n.toString());
-            this.DFS(n);
+
+        Stack<TrieNode> stack = new Stack<>();
+        stack.push(node);
+
+
+        while (!stack.isEmpty()) {
+            node = stack.pop();
+            Log.d(TAG, node.toString());
+
+            for (TrieNode n : node.getChildren()) {
+                stack.push(n);
+            }
         }
+
     }
+
 
     private static boolean isLowercaseAlphabetical(char c) {
         return c >= (int) 'a' && c <= (int) 'z';
     }
 
+
+    private interface DFSListener {
+        void onSuccess(boolean isLeaf);
+        void onFailure();
+    }
 
     private class TrieNode {
 
@@ -129,12 +146,12 @@ public class Dictionary {
         public String toString() {
             StringBuilder str = new StringBuilder();
             str.append(this.letter);
-            str.append(" ");
+            str.append("[");
             for (TrieNode n : this.children) {
                 str.append(n.getLetter());
                 str.append(", ");
             }
-            return str.toString();
+            return str.toString() + "]";
         }
 
 
