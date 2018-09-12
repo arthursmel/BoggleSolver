@@ -21,16 +21,16 @@ public class Dictionary {
     private static final String TAG = "Dictionary";
     private static final String DICT_FILE_NAME = "dict.txt";
     private static final char POP_STACK = '.';
-    private enum SearchOutcome { MATCH, PARTIAL_MATCH, NO_MATCH };
+    private static final char END_OF_WORD = ' ';
+    private enum SearchOutcome { BOTH, MATCH, PARTIAL_MATCH, NEITHER };
+    private final TrieNode ROOT = new TrieNode();
 
-    private TrieNode root;
 
-    public Dictionary(Context context) throws FileNotFoundException, IOException {
+    public Dictionary(Context context) throws IOException {
 
         Stack<TrieNode> stack = new Stack<>();
-        this.root = new TrieNode();
-        TrieNode prevNode = null;
-        TrieNode curNode = this.root;
+        TrieNode prevNode;
+        TrieNode curNode = this.ROOT;
 
         BufferedReader inputStream = new BufferedReader(new InputStreamReader(
                 context.getAssets().open(DICT_FILE_NAME)
@@ -48,9 +48,13 @@ public class Dictionary {
                 prevNode.children.add(curNode);
 
             } else if ((char) curChar == POP_STACK) {
-                // If the current character indicated to pop the stack
+                // If the current character indicates to pop the stack
                 prevNode = stack.pop();
                 curNode = stack.peek();
+
+            } else if ((char) curChar == END_OF_WORD){
+                // If the current character indicates the end of the word
+                curNode.addChild(new TrieNode());
 
             } else {
                 // Otherwise invalid character
@@ -65,11 +69,13 @@ public class Dictionary {
 
 
     public boolean isPartialWord(String word) {
-        return this.search(word) == SearchOutcome.PARTIAL_MATCH;
+        SearchOutcome searchOutcome = this.search(word);
+        return searchOutcome == SearchOutcome.PARTIAL_MATCH || searchOutcome == SearchOutcome.BOTH;
     }
 
     public boolean isWord(String word) {
-        return this.search(word) == SearchOutcome.MATCH;
+        SearchOutcome searchOutcome = this.search(word);
+        return searchOutcome == SearchOutcome.MATCH || searchOutcome == SearchOutcome.BOTH;
     }
 
     private SearchOutcome search(String searchWord) {
@@ -78,24 +84,32 @@ public class Dictionary {
         int wordArrIndex = 0;
         char curWordChar = wordArr[wordArrIndex];
 
-        TrieNode node = this.root;
-        while ((node = node.getChildWithLetter(curWordChar)) != null) {
+        TrieNode node = this.ROOT;
+        while ((node = node.getChildWithLetter(curWordChar)) != null && !node.isLeaf()) {
 
             if (wordArrIndex == (searchWord.length() - 1)) {
 
-                if (node.isLeaf()) {
+                if (node.hasOnlyLeafChild()) {
                     return SearchOutcome.MATCH;
+                } else if (node.hasLeafChild()){
+                    return SearchOutcome.BOTH;
                 } else {
                     return SearchOutcome.PARTIAL_MATCH;
                 }
 
             }
-
             curWordChar = wordArr[++wordArrIndex];
-
         }
-        return SearchOutcome.NO_MATCH;
 
+        return SearchOutcome.NEITHER;
+
+    }
+
+    private void DFS(TrieNode node) {
+        for (TrieNode n : node.getChildren()) {
+            Log.d(TAG, n.toString());
+            this.DFS(n);
+        }
     }
 
     private static boolean isLowercaseAlphabetical(char c) {
@@ -107,6 +121,7 @@ public class Dictionary {
 
         private char letter;
         private ArrayList<TrieNode> children;
+        private static final char LEAF = '\0';
 
         /*
         Constructor for typical letter node
@@ -117,15 +132,26 @@ public class Dictionary {
         }
 
         /*
-        Constructor for root with null char
+        Constructor for root/leaf with null char
          */
         TrieNode() {
-            this.letter = '\0';
+            this.letter = LEAF;
             this.children = new ArrayList<>();
         }
 
         boolean isLeaf() {
             return this.children.isEmpty();
+        }
+
+        boolean hasLeafChild() {
+            return this.getChildWithLetter(LEAF) != null;
+        }
+
+        boolean hasOnlyLeafChild() {
+            if (this.children.size() != 1)
+                return false;
+
+            return this.children.get(0).getLetter() == LEAF;
         }
 
         void addChild(TrieNode node) {
