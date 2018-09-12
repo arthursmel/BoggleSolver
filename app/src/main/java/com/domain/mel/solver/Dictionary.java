@@ -26,7 +26,7 @@ public class Dictionary {
     private static final String DICT_FILE_NAME = "dict.txt";
     private static final char POP_STACK = '.'; // char used to symbolise stack pop
     // char used to symbolise the end of a word
-    private static final char END_OF_WORD = ' ';
+    private static final char END_OF_WORD = (char) 13;
     /* Possible search outcomes for words that have been searched
     BOTH => the word exists in the dictionary, and may also be the beginning of another word
     MATCH => the word exists in the dictionary, the word is not part of the beginning of any other word
@@ -44,6 +44,8 @@ public class Dictionary {
     public Dictionary(Context context) throws IOException, InvalidDictionaryException {
 
         Stack<TrieNode> stack = new Stack<>();
+        stack.push(this.ROOT);
+
         TrieNode prevNode;
         TrieNode curNode = this.ROOT;
 
@@ -80,11 +82,12 @@ public class Dictionary {
 
             } else {
                 // Otherwise invalid character
-                throw new InvalidDictionaryException("Invalid Character in dictionary file");
+                throw new InvalidDictionaryException("Invalid Character in dictionary file: " + (char) curChar);
             }
 
         }
         inputStream.close();
+
     }
 
     /**
@@ -108,33 +111,40 @@ public class Dictionary {
     }
 
     /**
-     *
-     * @param searchWord
-     * @return
+     * @param searchWord the word to search for in the dictionary to check whether it is a full match,
+     *                   partial match, both, or neither
+     * @return the search outcome of the word in the dictionary
      */
     private SearchOutcome search(String searchWord) {
 
-        char[] wordArr = searchWord.toCharArray();
-        int wordArrIndex = 0;
-        char curWordChar = wordArr[wordArrIndex];
+        char[] wordArr = searchWord.toCharArray(); // Convert the string to array of letters
+        int wordArrIndex = 0; // Used to index the array of letters
+        char curWordChar = wordArr[wordArrIndex]; // Current character is the initial letter of the word
 
-        TrieNode node = this.ROOT;
+        TrieNode node = this.ROOT; // Starting at the root node
         while ((node = node.getChildWithLetter(curWordChar)) != null && !node.isLeaf()) {
+            /* While the current node contains the next letter in the array as a child,
+            and the current node is not a leaf (no at the bottom of the tree), update the
+            current node to be the child that contains the next letter in the array,
+            keep searching */
 
+            // If the current letter is the last letter in the word
             if (wordArrIndex == (searchWord.length() - 1)) {
 
                 if (node.hasOnlyLeafChild()) {
                     return SearchOutcome.MATCH;
                 } else if (node.hasLeafChild()){
+                    // Word is both a partial match, and a match
                     return SearchOutcome.BOTH;
                 } else {
                     return SearchOutcome.PARTIAL_MATCH;
                 }
 
             }
-            curWordChar = wordArr[++wordArrIndex];
+            curWordChar = wordArr[++wordArrIndex]; // Update current char & index
         }
 
+        // Otherwise, no match found
         return SearchOutcome.NEITHER;
 
     }
