@@ -37,23 +37,26 @@ public class Dictionary {
     private enum SearchOutcome { BOTH, MATCH, PARTIAL_MATCH, NEITHER };
     private final TrieNode ROOT = new TrieNode(); // The root node of the trie
 
-
-    public Dictionary(Context context) throws IOException {
+    /**
+     * @param context used to read the dictionary file from assets
+     * @throws IOException occurs if the dictionary file cannot be found
+     */
+    public Dictionary(Context context) throws IOException, InvalidDictionaryException {
 
         Stack<TrieNode> stack = new Stack<>();
         TrieNode prevNode;
         TrieNode curNode = this.ROOT;
 
+        // Reading in dictionary file
         BufferedReader inputStream = new BufferedReader(new InputStreamReader(
                 context.getAssets().open(DICT_FILE_NAME)
         ));
 
         int curChar;
         while ((curChar = inputStream.read()) != -1) {
+            // while current character is not the end of file...
 
-            Log.d(TAG, " char: " + (char) curChar);
-
-            if (isLowercaseAlphabetical((char) curChar)) {
+            if (Character.isLowerCase((char) curChar)) {
                 prevNode = curNode;
                 curNode = new TrieNode((char) curChar);
                 stack.push(curNode);
@@ -61,35 +64,54 @@ public class Dictionary {
 
             } else if ((char) curChar == POP_STACK) {
                 // If the current character indicates to pop the stack
+                if (curNode == ROOT)
+                    // Can't pop stack if there's nothing on it
+                    throw new InvalidDictionaryException("Invalid serialisation in dictionary file");
+
                 prevNode = stack.pop();
                 curNode = stack.peek();
 
             } else if ((char) curChar == END_OF_WORD){
                 // If the current character indicates the end of the word
+                if (curNode == ROOT)
+                    // Can't add an empty word
+                    throw new InvalidDictionaryException("Invalid serialisation in dictionary file");
                 curNode.addChild(new TrieNode());
 
             } else {
                 // Otherwise invalid character
-
+                throw new InvalidDictionaryException("Invalid Character in dictionary file");
             }
 
         }
-
         inputStream.close();
-
     }
 
-
+    /**
+     * @param word to search whether it is the beginning of at least one other word in the dictionary
+     * @return whether the word occurs as the beginning of at least one other word in the dictionary
+     */
     public boolean isPartialWord(String word) {
         SearchOutcome searchOutcome = this.search(word);
+        // Word may or may not be a word by itself, or only as the beginning of another word
         return searchOutcome == SearchOutcome.PARTIAL_MATCH || searchOutcome == SearchOutcome.BOTH;
     }
 
+    /**
+     * @param word to search whether the word exists in the dictionary
+     * @return whether the word exists in the dictionary
+     */
     public boolean isWord(String word) {
         SearchOutcome searchOutcome = this.search(word);
+        // Word may only exist as a word by itself, not as the beginning of another word
         return searchOutcome == SearchOutcome.MATCH || searchOutcome == SearchOutcome.BOTH;
     }
 
+    /**
+     *
+     * @param searchWord
+     * @return
+     */
     private SearchOutcome search(String searchWord) {
 
         char[] wordArr = searchWord.toCharArray();
@@ -117,6 +139,9 @@ public class Dictionary {
 
     }
 
+    /**
+     * @param node
+     */
     private void DFS(TrieNode node) {
         for (TrieNode n : node.getChildren()) {
             Log.d(TAG, n.toString());
@@ -124,9 +149,6 @@ public class Dictionary {
         }
     }
 
-    private static boolean isLowercaseAlphabetical(char c) {
-        return c >= (int) 'a' && c <= (int) 'z';
-    }
 
     /**
      * A class used to represent a node in the trie
@@ -214,6 +236,16 @@ public class Dictionary {
             return str.toString() + "]";
         }
 
+    }
+
+    /**
+     * An exception class used to notify about invalid serialisation in the
+     * dictionary file
+     */
+    public class InvalidDictionaryException extends Exception {
+        public InvalidDictionaryException(String message) {
+            super(message);
+        }
     }
 
 }
