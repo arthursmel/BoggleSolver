@@ -150,17 +150,6 @@ public class Dictionary {
     }
 
     /**
-     * @param node
-     */
-    private void DFS(TrieNode node) {
-        for (TrieNode n : node.getChildren()) {
-            Log.d(TAG, n.toString());
-            this.DFS(n);
-        }
-    }
-
-
-    /**
      * A class used to represent a node in the trie
      * Contains a letter and an array of children nodes
      * The node may be a leaf/root which has no letter
@@ -230,20 +219,6 @@ public class Dictionary {
          * ArrayList if there are no children */
         ArrayList<TrieNode> getChildren() {
             return this.children;
-        }
-
-
-        /** @return the string representation of the node */
-        @Override
-        public String toString() {
-            StringBuilder str = new StringBuilder();
-            str.append(this.letter);
-            str.append("-[");
-            for (TrieNode n : this.children) {
-                str.append(n.getLetter());
-                str.append(" ");
-            }
-            return str.toString() + "]";
         }
 
     }
