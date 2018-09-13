@@ -13,7 +13,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Solver solver = new Solver("qwe");
+        Solver solver = new Solver("abcdefghqujklmnop");
 
     }
 }
