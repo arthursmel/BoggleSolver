@@ -57,44 +57,95 @@ class Board implements Iterable<Dice> {
 
     }
 
+    /**
+     * @param dice the dice in which the adjacent dice will be found
+     * @return an ArrayList of dice which are adjacent to the dice
+     * provided in the parameter
+     */
     ArrayList<Dice> getAdjacentDice(Dice dice) {
-        if (!this.board.contains(dice)) {
+        // Get the co-ordinate of the dice provided on the boggle board
+        CoOrd diceCoOrd;
+        if ((diceCoOrd = this.getDiceCoOrd(dice)) == null)
+            // If the board doesn't contain the dice object
             return null;
-        }
 
         ArrayList<Dice> adjacentDice = new ArrayList<>();
-        CoOrd diceCoOrd = this.getDiceCoOrd(dice);
 
         for (int[] offset : this.offsets) {
+            // For each possible co-ordinate beside the co-ordinate of
+            // the dice provided
             CoOrd curCoOrd = new CoOrd(diceCoOrd.row + offset[OFFSET_ROW],
                     diceCoOrd.col + offset[OFFSET_COL]);
             if (this.isValidCoOrd(curCoOrd))
+                // If the potential co-ordinate is valid
                 adjacentDice.add(this.getCoOrdDice(curCoOrd));
+                // Add the dice which exists at this co-ordinate
+                // to the adjacent dice ArrayList
         }
-
         return adjacentDice;
     }
 
+    /**
+     * Finds the corresponding co-ordinate pair position of the dice on the boggle
+     * board, if the dice exists on the board
+     * @param dice the dice you want to find the co-ordinate pair of
+     * @return the co-ordinate of the dice on the board, otherwise
+     * if the dice doesn't exist on the board, null
+     */
     private CoOrd getDiceCoOrd(Dice dice) {
-        int position = this.getDicePosition(dice);
+        // Get the 1D position in the board array of the dice
+        int position;
+        if ((position = this.getDicePosition(dice)) == -1)
+            // If the dice provided exits on the board
+            return null;
+
         return new CoOrd(
-                position / DIMENSION,
-                position % DIMENSION
+                position / DIMENSION, // Calculating row of dice
+                position % DIMENSION // Calculating column of dice
         );
     }
-
+    /**
+     * Finds the corresponding dice on the boggle board of the
+     * co-ordinate pair, if the ordinate pair exists on the board
+     * @param coOrd the co-ordinate pair you want to find the dice of
+     * @return the dice object of the corresponding co-ordinate pair
+     * if the co-ordinate pair is valid, otherwise null
+     */
     private Dice getCoOrdDice(CoOrd coOrd) {
+        if (!this.isValidCoOrd(coOrd))
+            // If the co-ordinate pair is not valid
+            return null;
+        // Otherwise return the relative 1D position of the
+        // dice object in the board ArrayList of dice
         return this.board.get((coOrd.row * DIMENSION) + coOrd.col);
     }
 
+    /**
+     * Finds the 1D position in the dice ArrayList of a given
+     * dice object
+     * @param dice the dice to find the position of
+     * @return if dice object in the ArrayList, returns the
+     * 1D position, otherwise returns -1
+     */
     private int getDicePosition(Dice dice) {
         for (int i = 0; i < board.size(); i++)
+            // For each element in the board
             if (board.get(i).equals(dice))
+                // If the given dice and the element
+                // are equal, return current position
                 return i;
-        return -1;
+        return -1; // Otherwise dice not found, error
     }
 
+    /**
+     * Checks if a co-ordinate object is within the board
+     * ArrayList bounds
+     * @param coOrd the co-ord to check if valid
+     * @return whether the co-ord is valid or not
+     */
     private boolean isValidCoOrd(CoOrd coOrd) {
+        // If col of the co-ord is within the bounds of the board
+        // and if the row of the co-ord is within the bounds of the board
         return coOrd.col >= 0 && coOrd.col < DIMENSION &&
                 coOrd.row >= 0 && coOrd.row < DIMENSION;
     }
@@ -105,11 +156,13 @@ class Board implements Iterable<Dice> {
         return new Iterator<Dice>() {
             @Override
             public boolean hasNext() {
+                // While the iterator index is less than the board size
                 return curIteratorIndex < board.size();
             }
 
             @Override
             public Dice next() {
+                // Get next dice object in the board, and increment index
                 return board.get(curIteratorIndex++);
             }
         };
@@ -121,11 +174,20 @@ class Board implements Iterable<Dice> {
         }
     }
 
+    /**
+     * A row column pair representing a co-ordinate on
+     * the boggle board
+     */
     class CoOrd {
 
         final int row;
         final int col;
 
+        /**
+         * Constructor for a CoOrd
+         * @param row row position
+         * @param col column position
+         */
         CoOrd(int row, int col) {
             this.row = row;
             this.col = col;
