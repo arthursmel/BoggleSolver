@@ -1,11 +1,13 @@
 package com.domain.mel.solver;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.function.Consumer;
+
 
 /**
  *
@@ -14,16 +16,27 @@ import java.util.function.Consumer;
 public class Solver {
 
     private static final String TAG = "Solver";
+    private Dictionary dictionary;
+    private Board board;
 
-    public Solver(String boardLetters) {
+    public Solver(String boardLetters, Context context) throws IOException,
+            Dictionary.InvalidDictionaryException, Board.InvalidBoardException {
 
-        Board b = new Board(boardLetters);
 
-        for (Dice d : b) {
-            Log.d(TAG, "Dice: " + d + " - " + b.getAdjacentDice(d));
-        }
+        this.dictionary = new Dictionary(context);
+        this.board = new Board(boardLetters);
+
+        for (Dice d : this.board)
+            Log.d(TAG, "Dice: " + d + " - " + this.board
+                    .getAdjacentDice(d));
+
+
+
+
 
     }
+
+
 
 
 
@@ -34,6 +47,27 @@ public class Solver {
     public String[] getAllAnswers(String boardLetters) {
         return null;
     }
+
+
+    private void DFS(Dice curDice, String curWord, ArrayList<String> foundWords) {
+
+        curDice.setDiscovered();
+        curWord += curDice.getLetter();
+
+        if (this.dictionary.isWord(curWord))
+            if (foundWords != null)
+                foundWords.add(curWord);
+
+        for (Dice nextDice : this.board.getAdjacentDice(curDice)) {
+            String nextWord = curWord + nextDice.getLetter();
+            if (!nextDice.isDiscovered() && this.dictionary.isPartialWord(nextWord))
+                this.DFS(nextDice, nextWord, foundWords);
+
+        }
+
+    }
+
+
 
 
     private class CoOrd {
@@ -54,20 +88,41 @@ public class Solver {
 
     private class Dice {
 
-        private char letter;
+        private final char letter;
         private boolean discovered;
+        final static String QU_REPLACEMENT = ".";
 
-        Dice (char letter) {
-            this.letter = letter;
+        Dice (char letter) throws InvalidDiceException {
+            if (String.valueOf(letter).equals(QU_REPLACEMENT) ||
+                    Character.isLowerCase(letter))
+                this.letter = letter;
+            else
+                throw new InvalidDiceException("Invalid character");
+
         }
 
-        void isDiscovered() { this.discovered = true; }
+        void setDiscovered() { this.discovered = true; }
 
-        void notDiscovered() { this.discovered = false; }
+        void setNotDiscovered() { this.discovered = false; }
+
+        boolean isDiscovered() { return this.discovered; }
+
+        String getLetter() {
+            if (Character.isLowerCase(this.letter))
+                return String.valueOf(this.letter);
+            else
+                return "qu";
+        }
 
         @Override
         public String toString() {
             return "Dice{" + letter +'}';
+        }
+
+        class InvalidDiceException extends Exception {
+            InvalidDiceException(String message) {
+                super(message);
+            }
         }
     }
 
@@ -75,8 +130,10 @@ public class Solver {
     private class Board implements Iterable<Dice> {
 
         ArrayList<Dice> board;
-        final static int dimension = 4;
-        private final static String QU_REPLACEMENT = ".";
+        final static int DIMENSION = 4;
+        final static int LETTERS_COUNT = DIMENSION * DIMENSION;
+
+
         private int curIteratorIndex;
 
         private final int OFFSET_ROW = 0;
@@ -85,13 +142,26 @@ public class Solver {
                 {-1, -1}, {-1, 0}, {-1, 1}, {0, 1}, {1, 1}, {1, 0}, {1, -1}, {0, -1}
         };
 
-        Board (String boardLetters) {
+        Board (String boardLetters) throws InvalidBoardException {
 
             this.board = new ArrayList<>();
-            boardLetters = boardLetters.replaceAll("qu", QU_REPLACEMENT);
+            char[] boardLettersArr = boardLetters
+                    .replaceAll("qu", Dice.QU_REPLACEMENT)
+                    .toCharArray();
 
-            for (char letter : boardLetters.toCharArray()) {
-                this.board.add(new Dice(letter));
+            if (boardLettersArr.length != LETTERS_COUNT)
+                throw new InvalidBoardException("Number of letters must be: " + LETTERS_COUNT + ", currently: " +
+                    boardLettersArr.length);
+
+            for (char letter : boardLettersArr) {
+
+                try {
+                    this.board.add(new Dice(letter));
+                } catch (Dice.InvalidDiceException e) {
+                    e.printStackTrace();
+                    throw new InvalidBoardException("Invalid character in the board");
+                }
+
             }
 
         }
@@ -117,31 +187,30 @@ public class Solver {
         private CoOrd getDiceCoOrd(Dice dice) {
             int position = this.getDicePosition(dice);
             return new CoOrd(
-                    position / dimension,
-                    position % dimension
+                    position / DIMENSION,
+                    position % DIMENSION
             );
         }
 
         private Dice getCoOrdDice(CoOrd coOrd) {
-            return this.board.get((coOrd.row * dimension) + coOrd.col);
+            return this.board.get((coOrd.row * DIMENSION) + coOrd.col);
         }
 
         private int getDicePosition(Dice dice) {
-            for (int i = 0; i < board.size(); i++) {
-                if (board.get(i).equals(dice)) {
+            for (int i = 0; i < board.size(); i++)
+                if (board.get(i).equals(dice))
                     return i;
-                }
-            }
             return -1;
         }
 
         private boolean isValidCoOrd(CoOrd coOrd) {
-            return coOrd.col >= 0 && coOrd.col < dimension &&
-                    coOrd.row >= 0 && coOrd.row < dimension;
+            return coOrd.col >= 0 && coOrd.col < DIMENSION &&
+                    coOrd.row >= 0 && coOrd.row < DIMENSION;
         }
 
         void clearDiscoveries() {
-
+            for (Dice d : this.board)
+                d.setNotDiscovered();
         }
 
         @NonNull
@@ -158,6 +227,12 @@ public class Solver {
                     return board.get(curIteratorIndex++);
                 }
             };
+        }
+
+        private class InvalidBoardException extends Exception {
+            private InvalidBoardException(String message) {
+                super(message);
+            }
         }
     }
 
