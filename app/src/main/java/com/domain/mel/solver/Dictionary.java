@@ -1,7 +1,6 @@
 package com.domain.mel.solver;
 
 import android.content.Context;
-import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.IOException;

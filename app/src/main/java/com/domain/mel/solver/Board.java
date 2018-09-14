@@ -11,7 +11,7 @@ import java.util.Iterator;
  */
 class Board implements Iterable<Dice> {
 
-    ArrayList<Dice> board;
+    ArrayList<Dice> dices;
     final static int DIMENSION = 4;
     // Number of dice on board
     private final static int LETTERS_COUNT = DIMENSION * DIMENSION;
@@ -32,7 +32,7 @@ class Board implements Iterable<Dice> {
      */
     Board (String boardLetters) throws InvalidBoardException {
 
-        this.board = new ArrayList<>(); // Initialising empty board of dice
+        this.dices = new ArrayList<>(); // Initialising empty board of dice
         char[] boardLettersArr = boardLetters
                 .replaceAll("qu", Dice.QU_REPLACEMENT)
                 // Replacing all instances of the 'qu' dice with '.'
@@ -48,7 +48,7 @@ class Board implements Iterable<Dice> {
             // For each letter in the inputted characters
             try {
                 // Try to add the dice with the letter to the board
-                this.board.add(new Dice(letter));
+                this.dices.add(new Dice(letter));
             } catch (Dice.InvalidDiceException e) {
                 // Otherwise, the character is not alphabetical (or '.' representing 'qu')
                 throw new InvalidBoardException("Invalid character in the board");
@@ -117,7 +117,7 @@ class Board implements Iterable<Dice> {
             return null;
         // Otherwise return the relative 1D position of the
         // dice object in the board ArrayList of dice
-        return this.board.get((coOrd.row * DIMENSION) + coOrd.col);
+        return this.dices.get((coOrd.row * DIMENSION) + coOrd.col);
     }
 
     /**
@@ -128,9 +128,9 @@ class Board implements Iterable<Dice> {
      * 1D position, otherwise returns -1
      */
     private int getDicePosition(Dice dice) {
-        for (int i = 0; i < board.size(); i++)
+        for (int i = 0; i < dices.size(); i++)
             // For each element in the board
-            if (board.get(i).equals(dice))
+            if (dices.get(i).equals(dice))
                 // If the given dice and the element
                 // are equal, return current position
                 return i;
@@ -157,13 +157,13 @@ class Board implements Iterable<Dice> {
             @Override
             public boolean hasNext() {
                 // While the iterator index is less than the board size
-                return curIteratorIndex < board.size();
+                return curIteratorIndex < dices.size();
             }
 
             @Override
             public Dice next() {
                 // Get next dice object in the board, and increment index
-                return board.get(curIteratorIndex++);
+                return dices.get(curIteratorIndex++);
             }
         };
     }

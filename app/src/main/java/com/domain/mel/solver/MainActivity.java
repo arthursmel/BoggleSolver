@@ -14,7 +14,13 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         try {
-            Solver solver = new Solver("qwertyuiopasdfgh", this);
+            Solver solver = new Solver(this);
+            String[] answers = solver.getAllAnswers("qwertyfuiopasdfqu");
+
+            for (String a : answers) {
+                Log.d(TAG, a);
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -1,14 +1,11 @@
 package com.domain.mel.solver;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.util.Log;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
 import java.util.Stack;
 
 
@@ -20,45 +17,33 @@ public class Solver {
 
     private static final String TAG = "Solver";
     private Dictionary dictionary;
-    private Board board;
 
-    public Solver(String boardLetters, Context context) throws IOException,
-            Dictionary.InvalidDictionaryException, Board.InvalidBoardException {
-
-
+    public Solver(Context context) throws IOException,
+            Dictionary.InvalidDictionaryException {
         this.dictionary = new Dictionary(context);
-        this.board = new Board(boardLetters);
+    }
+
+
+    public Board.CoOrd getCoOrdPath(String boardLetters, String foundWord) {
+        return null;
+    }
+
+    public String[] getAllAnswers(String boardLetters) throws
+            Board.InvalidBoardException{
 
         ArrayList<String> foundWords = new ArrayList<String>();
+        Board board = new Board(boardLetters);
 
-
-        for (Dice d : this.board.board) {
-            this.DFS(d, new Stack<Dice>(), foundWords);
-
+        for (Dice dice : board.dices) {
+            this.DFS(board, dice, new Stack<Dice>(), foundWords);
         }
 
         Collections.sort(foundWords);
-
-        for (String word : foundWords) {
-            Log.d(TAG, "Word:" + word);
-        }
-
-
-
-
+        return foundWords.toArray(new String[foundWords.size()]);
     }
 
 
-    public Board.CoOrd getCoOrdPath(String foundWord) {
-        return null;
-    }
-
-    public String[] getAllAnswers(String boardLetters) {
-        return null;
-    }
-
-
-    private void DFS(Dice curDice, Stack<Dice> curWordPath, ArrayList<String> foundWords) {
+    private void DFS(Board board, Dice curDice, Stack<Dice> curWordPath, ArrayList<String> foundWords) {
 
         if (curWordPath == null) {
             return;
@@ -72,11 +57,11 @@ public class Solver {
             if (this.dictionary.isWord(curWord) && !foundWords.contains(curWord))
                 foundWords.add(curWord);
 
-        for (Dice nextDice : this.board.getAdjacentDice(curDice)) {
+        for (Dice nextDice : board.getAdjacentDice(curDice)) {
             nextWord = curWord + curDice.getLetter();
 
             if (!curWordPath.contains(nextDice) && this.dictionary.isPartialWord(nextWord))
-                this.DFS(nextDice, curWordPath, foundWords);
+                this.DFS(board, nextDice, curWordPath, foundWords);
 
         }
 
