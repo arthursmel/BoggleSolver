@@ -95,6 +95,12 @@ public class Dictionary {
      * @return whether the word occurs as the beginning of at least one other word in the dictionary
      */
     public boolean isPartialWord(String word) {
+
+        if (word.length() <= 0) {
+            // If word is empty, return false
+            return false;
+        }
+
         SearchOutcome searchOutcome = this.search(word);
         // Word may or may not be a word by itself, or only as the beginning of another word
         return searchOutcome == SearchOutcome.PARTIAL_MATCH || searchOutcome == SearchOutcome.BOTH;
@@ -105,6 +111,12 @@ public class Dictionary {
      * @return whether the word exists in the dictionary
      */
     public boolean isWord(String word) {
+
+        if (word.length() <= 0) {
+            // If word is empty return false
+            return false;
+        }
+
         SearchOutcome searchOutcome = this.search(word);
         // Word may only exist as a word by itself, not as the beginning of another word
         return searchOutcome == SearchOutcome.MATCH || searchOutcome == SearchOutcome.BOTH;

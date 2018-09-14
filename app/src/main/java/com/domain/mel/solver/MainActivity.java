@@ -14,7 +14,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         try {
-            Solver solver = new Solver("abcdefghqufjklmno", this);
+            Solver solver = new Solver("qwertyuiopasdfgh", this);
         } catch (Exception e) {
             e.printStackTrace();
         }

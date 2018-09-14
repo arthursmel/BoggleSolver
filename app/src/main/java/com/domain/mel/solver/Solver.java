@@ -6,7 +6,10 @@ import android.util.Log;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
+import java.util.Stack;
 
 
 /**
@@ -26,10 +29,19 @@ public class Solver {
         this.dictionary = new Dictionary(context);
         this.board = new Board(boardLetters);
 
-        for (Dice d : this.board)
-            Log.d(TAG, "Dice: " + d + " - " + this.board
-                    .getAdjacentDice(d));
+        ArrayList<String> foundWords = new ArrayList<String>();
 
+
+        for (Dice d : this.board.board) {
+            this.DFS(d, new Stack<Dice>(), foundWords);
+
+        }
+
+        Collections.sort(foundWords);
+
+        for (String word : foundWords) {
+            Log.d(TAG, "Word:" + word);
+        }
 
 
 
@@ -49,24 +61,39 @@ public class Solver {
     }
 
 
-    private void DFS(Dice curDice, String curWord, ArrayList<String> foundWords) {
+    private void DFS(Dice curDice, Stack<Dice> curWordPath, ArrayList<String> foundWords) {
 
-        curDice.setDiscovered();
-        curWord += curDice.getLetter();
+        if (curWordPath == null) {
+            return;
+        }
 
-        if (this.dictionary.isWord(curWord))
-            if (foundWords != null)
+        String nextWord;
+        String curWord = this.stackToString(curWordPath);
+        curWordPath.push(curDice);
+
+        if (foundWords != null)
+            if (this.dictionary.isWord(curWord) && !foundWords.contains(curWord))
                 foundWords.add(curWord);
 
         for (Dice nextDice : this.board.getAdjacentDice(curDice)) {
-            String nextWord = curWord + nextDice.getLetter();
-            if (!nextDice.isDiscovered() && this.dictionary.isPartialWord(nextWord))
-                this.DFS(nextDice, nextWord, foundWords);
+            nextWord = curWord + curDice.getLetter();
+
+            if (!curWordPath.contains(nextDice) && this.dictionary.isPartialWord(nextWord))
+                this.DFS(nextDice, curWordPath, foundWords);
 
         }
 
+        curWordPath.pop();
+
     }
 
+    private String stackToString(Stack<Dice> wordPath) {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (Dice d : wordPath) {
+            stringBuilder.append(d.getLetter());
+        }
+        return stringBuilder.toString();
+    }
 
 
 
@@ -89,7 +116,6 @@ public class Solver {
     private class Dice {
 
         private final char letter;
-        private boolean discovered;
         final static String QU_REPLACEMENT = ".";
 
         Dice (char letter) throws InvalidDiceException {
@@ -100,12 +126,6 @@ public class Solver {
                 throw new InvalidDiceException("Invalid character");
 
         }
-
-        void setDiscovered() { this.discovered = true; }
-
-        void setNotDiscovered() { this.discovered = false; }
-
-        boolean isDiscovered() { return this.discovered; }
 
         String getLetter() {
             if (Character.isLowerCase(this.letter))
@@ -126,42 +146,54 @@ public class Solver {
         }
     }
 
-
+    /**
+     * A Board object represents the board of dice in the game of boggle
+     * Contains an array of dice that can be iterated through
+     */
     private class Board implements Iterable<Dice> {
 
         ArrayList<Dice> board;
         final static int DIMENSION = 4;
+        // Number of dice on board
         final static int LETTERS_COUNT = DIMENSION * DIMENSION;
 
-
-        private int curIteratorIndex;
+        private int curIteratorIndex; // Current index of dice iterator
 
         private final int OFFSET_ROW = 0;
         private final int OFFSET_COL = 1;
         private final int[][] offsets = {
                 {-1, -1}, {-1, 0}, {-1, 1}, {0, 1}, {1, 1}, {1, 0}, {1, -1}, {0, -1}
-        };
+        }; // (Row, Column) pairs which are used to valid create edges between dice
 
+        /**
+         * Constructor to initialise a boggle board object
+         * @param boardLetters the letters on the board
+         * @throws InvalidBoardException occurs if an invalid character is used in the input,
+         * valid letters being 'a' to 'z' (where 'qu' is considered as a single letter)
+         */
         Board (String boardLetters) throws InvalidBoardException {
 
-            this.board = new ArrayList<>();
+            this.board = new ArrayList<>(); // Initialising empty board of dice
             char[] boardLettersArr = boardLetters
                     .replaceAll("qu", Dice.QU_REPLACEMENT)
-                    .toCharArray();
+                    // Replacing all instances of the 'qu' dice with '.'
+                    // in order to keep type as char
+                    .toCharArray(); // Converting string to an array of chars
 
             if (boardLettersArr.length != LETTERS_COUNT)
+                // If an invalid number of letters have been used to initialise board
                 throw new InvalidBoardException("Number of letters must be: " + LETTERS_COUNT + ", currently: " +
                     boardLettersArr.length);
 
             for (char letter : boardLettersArr) {
-
+                // For each letter in the inputted characters
                 try {
+                    // Try to add the dice with the letter to the board
                     this.board.add(new Dice(letter));
                 } catch (Dice.InvalidDiceException e) {
-                    e.printStackTrace();
+                    // Otherwise, the character is not alphabetical (or '.' representing 'qu')
                     throw new InvalidBoardException("Invalid character in the board");
                 }
-
             }
 
         }
@@ -206,11 +238,6 @@ public class Solver {
         private boolean isValidCoOrd(CoOrd coOrd) {
             return coOrd.col >= 0 && coOrd.col < DIMENSION &&
                     coOrd.row >= 0 && coOrd.row < DIMENSION;
-        }
-
-        void clearDiscoveries() {
-            for (Dice d : this.board)
-                d.setNotDiscovered();
         }
 
         @NonNull
