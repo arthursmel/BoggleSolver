@@ -27,32 +27,15 @@ public class Solver {
     public Board.CoOrd[] getCoOrdPath(String boardLetters, String foundWord) throws
         Board.InvalidBoardException {
 
-        ArrayList<Board.CoOrd> coOrds = new ArrayList<>();
-        Stack<String> word = new Stack<>();
         Stack<Dice> tempPath = new Stack<>();
         Stack<Dice> path = new Stack<>();
+        Stack<String> word = wordToStack(foundWord);
         Board board = new Board(boardLetters);
 
-
-        for (String letter : foundWord.split("")) {
-            if (!letter.isEmpty())
-                word.push(letter);
-        }
-        Collections.reverse(word);
-
-
-        for (Dice dice : board.dices) {
+        for (Dice dice : board.dices)
             this.DFSWordPath(board, dice, word, tempPath, path);
-        }
 
-        Log.d(TAG, "Size" + path);
-
-
-        for (Dice dice : path) {
-            coOrds.add(board.getDiceCoOrd(dice));
-        }
-
-        return coOrds.toArray(new Board.CoOrd[coOrds.size()]);
+        return stackToCoOrds(path, board);
     }
 
     private void DFSWordPath(Board board, Dice curDice, Stack<String> word, Stack<Dice> curPath, Stack<Dice> path) {
@@ -102,7 +85,7 @@ public class Solver {
         }
 
         String nextWord;
-        String curWord = this.stackToWord(curWordPath);
+        String curWord = stackToWord(curWordPath);
         curWordPath.push(curDice);
 
         if (foundWords != null)
@@ -121,12 +104,33 @@ public class Solver {
 
     }
 
-    private String stackToWord(Stack<Dice> wordPath) {
+    private static Stack<String> wordToStack(String word) {
+        Stack<String> stack = new Stack<>();
+        word = word.replaceAll("qu", Dice.QU_REPLACEMENT);
+        for (String letter : word.split("")) {
+            if (!letter.isEmpty())
+                stack.push(
+                        (letter.equals(Dice.QU_REPLACEMENT)) ? "qu" : letter
+                );
+        }
+        Collections.reverse(stack);
+        return stack;
+    }
+
+    private static String stackToWord(Stack<Dice> path) {
         StringBuilder stringBuilder = new StringBuilder();
-        for (Dice d : wordPath) {
+        for (Dice d : path) {
             stringBuilder.append(d.getLetter());
         }
         return stringBuilder.toString();
+    }
+
+    private static Board.CoOrd[] stackToCoOrds(Stack<Dice> path, Board board) {
+        ArrayList<Board.CoOrd> coOrds = new ArrayList<>();
+        for (Dice dice : path) {
+            coOrds.add(board.getDiceCoOrd(dice));
+        }
+        return coOrds.toArray(new Board.CoOrd[coOrds.size()]);
     }
 
 }
