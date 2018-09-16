@@ -24,18 +24,70 @@ public class Solver {
     }
 
 
-    public Board.CoOrd getCoOrdPath(String boardLetters, String foundWord) {
-        return null;
+    public Board.CoOrd[] getCoOrdPath(String boardLetters, String foundWord) throws
+        Board.InvalidBoardException {
+
+        ArrayList<Board.CoOrd> coOrds = new ArrayList<>();
+        Stack<String> word = new Stack<>();
+        Stack<Dice> tempPath = new Stack<>();
+        Stack<Dice> path = new Stack<>();
+        Board board = new Board(boardLetters);
+
+
+        for (String letter : foundWord.split("")) {
+            if (!letter.isEmpty())
+                word.push(letter);
+        }
+        Collections.reverse(word);
+
+
+        for (Dice dice : board.dices) {
+            this.DFSWordPath(board, dice, word, tempPath, path);
+        }
+
+        Log.d(TAG, "Size" + path);
+
+
+        for (Dice dice : path) {
+            coOrds.add(board.getDiceCoOrd(dice));
+        }
+
+        return coOrds.toArray(new Board.CoOrd[coOrds.size()]);
     }
 
-    public String[] getAllAnswers(String boardLetters) throws
+    private void DFSWordPath(Board board, Dice curDice, Stack<String> word, Stack<Dice> curPath, Stack<Dice> path) {
+
+        if (word.isEmpty()) {
+
+            if (path.isEmpty())
+                path.addAll(curPath);
+
+            Log.d(TAG, path.toString());
+            return;
+        }
+
+        String curLetter = word.pop();
+
+        if (curLetter.equals(curDice.getLetter())) {
+            curPath.push(curDice);
+            for (Dice dice : board.getAdjacentDice(curDice)) {
+                this.DFSWordPath(board, dice, word, curPath, path);
+            }
+
+            curPath.pop();
+        }
+
+        word.push(curLetter);
+    }
+
+    public String[] getAllWords(String boardLetters) throws
             Board.InvalidBoardException{
 
-        ArrayList<String> foundWords = new ArrayList<String>();
+        ArrayList<String> foundWords = new ArrayList<>();
         Board board = new Board(boardLetters);
 
         for (Dice dice : board.dices) {
-            this.DFS(board, dice, new Stack<Dice>(), foundWords);
+            this.DFSAllWords(board, dice, new Stack<Dice>(), foundWords);
         }
 
         Collections.sort(foundWords);
@@ -43,7 +95,7 @@ public class Solver {
     }
 
 
-    private void DFS(Board board, Dice curDice, Stack<Dice> curWordPath, ArrayList<String> foundWords) {
+    private void DFSAllWords(Board board, Dice curDice, Stack<Dice> curWordPath, ArrayList<String> foundWords) {
 
         if (curWordPath == null) {
             return;
@@ -61,7 +113,7 @@ public class Solver {
             nextWord = curWord + curDice.getLetter();
 
             if (!curWordPath.contains(nextDice) && this.dictionary.isPartialWord(nextWord))
-                this.DFS(board, nextDice, curWordPath, foundWords);
+                this.DFSAllWords(board, nextDice, curWordPath, foundWords);
 
         }
 

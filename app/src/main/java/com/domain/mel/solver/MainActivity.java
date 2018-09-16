@@ -15,10 +15,10 @@ public class MainActivity extends AppCompatActivity {
 
         try {
             Solver solver = new Solver(this);
-            String[] answers = solver.getAllAnswers("qwertyfuiopasdfqu");
+            Board.CoOrd[] a = solver.getCoOrdPath("qwerpyuiopasdfgh", "pod");
 
-            for (String a : answers) {
-                Log.d(TAG, a);
+            for (Board.CoOrd c : a) {
+                Log.d(TAG, c.toString());
             }
 
         } catch (Exception e) {

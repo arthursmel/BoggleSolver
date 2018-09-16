@@ -92,7 +92,7 @@ class Board implements Iterable<Dice> {
      * @return the co-ordinate of the dice on the board, otherwise
      * if the dice doesn't exist on the board, null
      */
-    private CoOrd getDiceCoOrd(Dice dice) {
+    public CoOrd getDiceCoOrd(Dice dice) {
         // Get the 1D position in the board array of the dice
         int position;
         if ((position = this.getDicePosition(dice)) == -1)
@@ -111,7 +111,7 @@ class Board implements Iterable<Dice> {
      * @return the dice object of the corresponding co-ordinate pair
      * if the co-ordinate pair is valid, otherwise null
      */
-    private Dice getCoOrdDice(CoOrd coOrd) {
+    public Dice getCoOrdDice(CoOrd coOrd) {
         if (!this.isValidCoOrd(coOrd))
             // If the co-ordinate pair is not valid
             return null;
