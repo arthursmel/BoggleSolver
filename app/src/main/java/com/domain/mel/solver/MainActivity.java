@@ -15,7 +15,7 @@ public class MainActivity extends AppCompatActivity {
 
         try {
             Solver solver = new Solver(this);
-            Board.CoOrd[] a = solver.getCoOrdPath("qwerpyuiopasdfgh", "payer");
+            Board.CoOrd[] a = solver.getCoOrdPath("xbxexattetxexter", "batter");
 
             for (Board.CoOrd c : a) {
                 Log.d(TAG, c.toString());
