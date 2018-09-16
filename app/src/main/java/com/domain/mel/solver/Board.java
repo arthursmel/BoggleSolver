@@ -30,7 +30,7 @@ class Board implements Iterable<Dice> {
      * @throws InvalidBoardException occurs if an invalid character is used in the input,
      * valid letters being 'a' to 'z' (where 'qu' is considered as a single letter)
      */
-    Board (String boardLetters) throws InvalidBoardException {
+    public Board (String boardLetters) throws InvalidBoardException {
 
         this.dices = new ArrayList<>(); // Initialising empty board of dice
         char[] boardLettersArr = boardLetters
@@ -62,7 +62,7 @@ class Board implements Iterable<Dice> {
      * @return an ArrayList of dice which are adjacent to the dice
      * provided in the parameter
      */
-    ArrayList<Dice> getAdjacentDice(Dice dice) {
+    public Dice[] getAdjacentDice(Dice dice) {
         // Get the co-ordinate of the dice provided on the boggle board
         CoOrd diceCoOrd;
         if ((diceCoOrd = this.getDiceCoOrd(dice)) == null)
@@ -82,7 +82,7 @@ class Board implements Iterable<Dice> {
                 // Add the dice which exists at this co-ordinate
                 // to the adjacent dice ArrayList
         }
-        return adjacentDice;
+        return adjacentDice.toArray(new Dice[adjacentDice.size()]);
     }
 
     /**
@@ -168,7 +168,7 @@ class Board implements Iterable<Dice> {
         };
     }
 
-    class InvalidBoardException extends Exception {
+    public class InvalidBoardException extends Exception {
         private InvalidBoardException(String message) {
             super(message);
         }
@@ -178,7 +178,7 @@ class Board implements Iterable<Dice> {
      * A row column pair representing a co-ordinate on
      * the boggle board
      */
-    class CoOrd {
+    public static class CoOrd {
 
         final int row;
         final int col;

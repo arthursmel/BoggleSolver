@@ -45,7 +45,6 @@ public class Solver {
             if (path.isEmpty())
                 path.addAll(curPath);
 
-            Log.d(TAG, path.toString());
             return;
         }
 
@@ -53,9 +52,8 @@ public class Solver {
 
         if (curLetter.equals(curDice.getLetter())) {
             curPath.push(curDice);
-            for (Dice dice : board.getAdjacentDice(curDice)) {
+            for (Dice dice : board.getAdjacentDice(curDice))
                 this.DFSWordPath(board, dice, word, curPath, path);
-            }
 
             curPath.pop();
         }

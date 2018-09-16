@@ -8,7 +8,7 @@ package com.domain.mel.solver;
 class Dice {
 
     private final char letter;
-    final static String QU_REPLACEMENT = ".";
+    public final static String QU_REPLACEMENT = ".";
 
     /**
      * Constructor to create a new dice object. Must use '.'
@@ -17,7 +17,7 @@ class Dice {
      * @throws InvalidDiceException occurs if an invalid character
      * is used as the letter
      */
-    Dice (char letter) throws InvalidDiceException {
+    public Dice (char letter) throws InvalidDiceException {
         if (String.valueOf(letter).equals(QU_REPLACEMENT) ||
                 Character.isLowerCase(letter))
             // If the character is valid
@@ -32,7 +32,7 @@ class Dice {
      * @return the letter on the dice (note 'qu' will be returned
      * instead of '.')
      */
-    String getLetter() {
+    public String getLetter() {
         if (Character.isLowerCase(this.letter))
             // If character isn't '.'
             return String.valueOf(this.letter);
@@ -46,7 +46,7 @@ class Dice {
         return "Dice{" + letter +'}';
     }
 
-    class InvalidDiceException extends Exception {
+    public class InvalidDiceException extends Exception {
         InvalidDiceException(String message) {
             super(message);
         }
