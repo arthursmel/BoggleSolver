@@ -70,8 +70,8 @@ public class Solver {
      * @param curDice the root dice to start the DFS from
      * @param word the word to be found in the boggle board
      *             (as a stack of single character strings apart from 'qu')
-     * @param curPath the temporary current co-ord stack
-     * @param path the final co-ord stack of the co-ords of the given word
+     * @param curPath the temporary current co-ord stack (must be initialised)
+     * @param path the final co-ord stack of the co-ords of the given word (must be initialised)
      */
     private void DFSWordPath(Board board, Dice curDice, Stack<String> word, Stack<Dice> curPath, Stack<Dice> path) {
 
@@ -128,64 +128,100 @@ public class Solver {
     }
 
     /**
-     *
-     * @param board
-     * @param curDice
-     * @param curWordPath
-     * @param foundWords
+     * Helper function for getAllWords
+     * Recursive DFS to find all words in the given boggle board
+     * Results are returned in 'foundWords' parameter.
+     * For multiple instances of the word on a single board, only 1 solution will be returned
+     * @param board the boggle board for all words to be found
+     * @param curDice the root dice to start the DFS from
+     * @param curWordPath the temporary current path (must be initialised)
+     * @param foundWords the final array list of all found words (must be initialised)
      */
     private void DFSAllWords(Board board, Dice curDice, Stack<Dice> curWordPath, ArrayList<String> foundWords) {
 
-        if (curWordPath == null) {
-            return;
-        }
-
         String nextWord;
+        // Converting current stack to the corresponding current word
         String curWord = stackToWord(curWordPath);
+        // Push current dice to the stack
         curWordPath.push(curDice);
 
-        if (foundWords != null)
-            if (this.dictionary.isWord(curWord) && !foundWords.contains(curWord))
-                foundWords.add(curWord);
+        if (this.dictionary.isWord(curWord) && !foundWords.contains(curWord))
+            // If the current word is valid, and not already found, add to result
+            foundWords.add(curWord);
 
         for (Dice nextDice : board.getAdjacentDice(curDice)) {
+            // For each dice in the dices adjacent to the current dice
             nextWord = curWord + curDice.getLetter();
+            // Add the dice letter to the current partial word
 
             if (!curWordPath.contains(nextDice) && this.dictionary.isPartialWord(nextWord))
+                // If the next dice has not already been used to create the current word,
+                // and the current word is a possible valid word, DFS from the next dice
                 this.DFSAllWords(board, nextDice, curWordPath, foundWords);
 
         }
 
+        // Finished searching from this dice, pop from stack
         curWordPath.pop();
-
     }
 
+    /**
+     * Converts the given string into a stack of strings with 1 character
+     * apart from 'qu'
+     * @param word the word to be converted into a stack
+     * @return the resulting stack from the given word
+     */
     private static Stack<String> wordToStack(String word) {
         Stack<String> stack = new Stack<>();
+
+        // Replacing any dice with 'qu' in order for split to
+        // separate characters
         word = word.replaceAll("qu", Dice.QU_REPLACEMENT);
+
         for (String letter : word.split("")) {
-            if (!letter.isEmpty())
+            if (!letter.isEmpty()) // Prevents the empty char from
+                // split from being added to the stack
                 stack.push(
+                        // Replacing 'qu' back again
                         (letter.equals(Dice.QU_REPLACEMENT)) ? "qu" : letter
                 );
         }
+        // Reversing stack so first letter of the word is at the top
         Collections.reverse(stack);
         return stack;
     }
 
+    /**
+     * Converts a stack of dice into the corresponding word
+     * @param path the dice path of the word
+     * @return the string of the corresponding word if the
+     * path is not null, otherwise null
+     */
     private static String stackToWord(Stack<Dice> path) {
         StringBuilder stringBuilder = new StringBuilder();
         for (Dice d : path) {
+            // For each dice in the path, get the dice letter
+            // and add to result string
             stringBuilder.append(d.getLetter());
         }
         return stringBuilder.toString();
     }
 
+    /**
+     * Converts a stack of dice into an array of their
+     * respective co-ords
+     * @param path the stack of dice to convert into co-ords
+     * @param board the current boggle board
+     * @return the stack of co-ords of the corresponding dice given
+     */
     private static Board.CoOrd[] stackToCoOrds(Stack<Dice> path, Board board) {
         ArrayList<Board.CoOrd> coOrds = new ArrayList<>();
         for (Dice dice : path) {
+            // For each dice in the given path
+            // Get dice co-ord and add to result
             coOrds.add(board.getDiceCoOrd(dice));
         }
+        // Convert array list to array
         return coOrds.toArray(new Board.CoOrd[coOrds.size()]);
     }
 
