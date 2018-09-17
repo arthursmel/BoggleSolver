@@ -14,15 +14,12 @@
         android:layout_height="wrap_content"
         android:id="@+id/mainListView"
         android:background="@color/listRowBackground"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/boardWrapper"
         android:layout_above="@+id/mainEditText"
         android:fastScrollEnabled="true"
-        android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:cacheColorHint="@color/colorAccent"/>
-
 
     <RelativeLayout
         android:layout_width="wrap_content"
@@ -31,7 +28,6 @@
         android:background="@color/shadowWrapper"
         android:elevation="2dp"
         android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true">
 
         <TableLayout
@@ -40,7 +36,6 @@
             android:id="@+id/board"
             android:layout_alignWithParentIfMissing="true"
             android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:padding="@dimen/board_padding">
 
@@ -166,7 +161,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_alignParentTop="true"
-            android:layout_toRightOf="@+id/board"
             android:layout_toEndOf="@+id/board"
             android:id="@+id/infoWrapper"
             android:layout_alignBottom="@+id/board"
@@ -179,7 +173,6 @@
                 android:text="@string/total_score_description"
                 android:id="@+id/totalScoreDescTextView"
                 android:layout_alignParentTop="true"
-                android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:textStyle="italic" />
 
@@ -190,7 +183,6 @@
                 android:text="@string/zero_string"
                 android:id="@+id/totalScoreTextView"
                 android:layout_alignParentTop="true"
-                android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true" />
 
             <TextView
@@ -200,7 +192,6 @@
                 android:text="@string/total_words_description"
                 android:id="@+id/totalWordsDescTextView"
                 android:layout_below="@+id/totalScoreDescTextView"
-                android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:textStyle="italic" />
 
@@ -211,7 +202,6 @@
                 android:text="@string/zero_string"
                 android:id="@+id/totalWordsTextView"
                 android:layout_below="@+id/totalScoreTextView"
-                android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true" />
 
             <TextView
@@ -221,7 +211,6 @@
                 android:text="@string/user_score_description"
                 android:id="@+id/userScoreDescTextView"
                 android:layout_alignParentBottom="true"
-                android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:textStyle="bold|italic" />
 
@@ -232,25 +221,11 @@
                 android:text="@string/zero_string"
                 android:id="@+id/userScoreTextView"
                 android:layout_alignParentBottom="true"
-                android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
                 android:textStyle="bold" />
         </RelativeLayout>
 
     </RelativeLayout>
-
-    <ProgressBar
-        style="?android:attr/progressBarStyleHorizontal"
-        android:id="@+id/progressBar"
-        android:visibility="gone"
-        android:layout_height="@dimen/progress_bar_height"
-        android:layout_width="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="false"
-        android:layout_above="@+id/mainEditText" />
 
     <EditText
         android:hint="@string/main_edit_text_hint"
@@ -264,10 +239,7 @@
         android:textColor="@color/colorAccent"
         android:textColorHint="@color/colorAccent"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
-
 
 </RelativeLayout>
