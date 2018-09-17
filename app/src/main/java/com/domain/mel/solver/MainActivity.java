@@ -13,17 +13,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        try {
-            Solver solver = new Solver(this);
-            Board.CoOrd[] a = solver.getCoOrdPath("xbxexattetxexter", "batter");
-
-            for (Board.CoOrd c : a) {
-                Log.d(TAG, c.toString());
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
 
     }

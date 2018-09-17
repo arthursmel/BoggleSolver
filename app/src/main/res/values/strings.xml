@@ -1,3 +1,20 @@
 <resources>
-    <string name="app_name">Solver</string>
+    <string name="app_name">Solver For Boggle</string>
+
+    <string name="main_edit_text_hint">Enter letters</string>
+    <string name="input_error">Error: input is not valid</string>
+
+    <string name="placeholder_found_word">word</string>
+    <string name="placeholder_score">12</string>
+    <string name="score_description">Score:</string>
+
+    <string name="action_help">Help</string>
+    <string name="help_description">
+        - Enter letters from top to bottom.\n- Enter letters from left to right.\n- Enter \"Q\" instead of \"QU\".\n- No need to use spaces or commas.\n- Press the search button beside each word for a definition.\n- Check the box beside a word to add to your score.\n- Click a word to see it on the board.
+    </string>
+    <string name="dismiss_dialog_content_description">Dismiss help dialog</string>
+    <string name="total_score_description">Total Score:</string>
+    <string name="zero_string">0</string>
+    <string name="total_words_description">Total Words:</string>
+    <string name="user_score_description">Your Score:</string>
 </resources>
