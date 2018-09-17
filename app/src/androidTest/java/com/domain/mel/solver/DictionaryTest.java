@@ -8,17 +8,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import static org.junit.Assert.*;
 
-/**
- * Instrumented test, which will execute on an Android device.
- *
- * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
- */
 @RunWith(AndroidJUnit4.class)
 public class DictionaryTest {
 
     @Test
     public void isPartialWordTest() throws Exception {
-        // Context of the app under test.
+        // Context of the app under test
         Context appContext = InstrumentationRegistry.getTargetContext();
         Dictionary dictionary = new Dictionary(appContext);
 
@@ -29,7 +24,7 @@ public class DictionaryTest {
 
     @Test
     public void isWordTest() throws Exception {
-        // Context of the app under test.
+        // Context of the app under test
         Context appContext = InstrumentationRegistry.getTargetContext();
         Dictionary dictionary = new Dictionary(appContext);
 

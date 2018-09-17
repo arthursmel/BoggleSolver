@@ -6,9 +6,6 @@ import org.junit.runners.JUnit4;
 
 import static org.junit.Assert.*;
 
-
-
-
 @RunWith(JUnit4.class)
 public class BoardTest {
 
@@ -21,7 +18,7 @@ public class BoardTest {
         for (Dice d : board) {
             result.append(d.getLetter());
         }
-        assertEquals(result.toString(), testString);
+        assertEquals(testString, result.toString());
     }
 
     @Test

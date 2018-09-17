@@ -17,6 +17,7 @@ import java.util.Stack;
 public class Solver {
 
     private static final String TAG = "Solver";
+    private static final int MINIMUM_WORD_LETTER_COUNT = 3;
     private Dictionary dictionary;
 
     /**
@@ -145,8 +146,11 @@ public class Solver {
         // Push current dice to the stack
         curWordPath.push(curDice);
 
-        if (this.dictionary.isWord(curWord) && !foundWords.contains(curWord))
-            // If the current word is valid, and not already found, add to result
+        if (this.dictionary.isWord(curWord) &&
+                !foundWords.contains(curWord) &&
+                curWord.length() >= MINIMUM_WORD_LETTER_COUNT)
+            // If the current word is valid, and not already found,
+            // and longer than the minimum word letter count, add to result
             foundWords.add(curWord);
 
         for (Dice nextDice : board.getAdjacentDice(curDice)) {
