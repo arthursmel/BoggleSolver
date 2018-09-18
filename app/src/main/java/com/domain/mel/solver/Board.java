@@ -9,10 +9,10 @@ import java.util.Iterator;
  * A Board object represents the board of dice in the game of boggle
  * Contains an array of dice that can be iterated through
  */
-class Board implements Iterable<Dice> {
+public class Board implements Iterable<Dice> {
 
     ArrayList<Dice> dices;
-    final static int DIMENSION = 4;
+    public final static int DIMENSION = 4;
     // Number of dice on board
     private final static int LETTERS_COUNT = DIMENSION * DIMENSION;
 
@@ -56,6 +56,19 @@ class Board implements Iterable<Dice> {
         }
 
     }
+
+    /**
+     *
+     * @return
+     */
+    public String[] toStringArray() {
+        ArrayList<String> result = new ArrayList<>();
+        for (Dice dice : this.dices) {
+            result.add(dice.getLetter());
+        }
+        return result.toArray(new String[result.size()]);
+    }
+
 
     /**
      * @param dice the dice in which the adjacent dice will be found
@@ -168,7 +181,7 @@ class Board implements Iterable<Dice> {
         };
     }
 
-    public class InvalidBoardException extends Exception {
+    public static class InvalidBoardException extends Exception {
         private InvalidBoardException(String message) {
             super(message);
         }

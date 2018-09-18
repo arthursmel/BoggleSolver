@@ -14,6 +14,8 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 
+import com.domain.mel.solver.views.BoardView;
+
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
@@ -21,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
     private ListView mainListView;
     private EditText mainEditText;
     private FloatingActionButton fab;
+    private BoardView boardView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,10 +36,21 @@ public class MainActivity extends AppCompatActivity {
         this.fab = findViewById(R.id.fab);
         this.mainListView = findViewById(R.id.mainListView);
         this.mainEditText = findViewById(R.id.mainEditText);
+        this.boardView = findViewById(R.id.board);
 
         // Hide keyboard, prevent edit text from forcing keyboard open on start
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
+        this.fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try {
+                    Board b = new Board("abcdefghijklmnoqu");
+                    boardView.update(b);
+                } catch (Exception e) {}
+
+            }
+        });
 
     }
 
@@ -76,5 +90,9 @@ public class MainActivity extends AppCompatActivity {
         dialog.show();
 
     }
+
+
+
+
 
 }

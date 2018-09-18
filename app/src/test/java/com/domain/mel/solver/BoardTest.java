@@ -53,5 +53,15 @@ public class BoardTest {
         }
     }
 
+    @Test
+    public void boardToStringArrayTest() throws Exception {
+        Board board = new Board("abcdefghijklmnoqu");
+        String[] expected = {"a", "b", "c", "d", "e", "f", "g", "h",
+        "i", "j", "k", "l", "m", "n", "o", "qu"};
+        String[] boardArr = board.toStringArray();
+        for (int i = 0; i < expected.length; i++) {
+            assertEquals(expected[i], boardArr[i]);
+        }
+    }
 
 }
