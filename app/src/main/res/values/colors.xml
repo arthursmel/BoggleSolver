@@ -6,11 +6,6 @@
     <color name="colorAccent">#FF9800</color>
     <color name="colorAccentDark">#EF6C00</color>
 
-    <color name="diceText">#000000</color>
-    <color name="diceTextHighlighted">#FFFFFF</color>
-    <color name="diceColor">#E0E0E0</color>
-    <color name="diceSelected">#BDBDBD</color>
-
     <color name="listRowBackground">#f5f5f5</color>
     <color name="listRowText">#757575</color>
     <color name="listRowTextSecondary">#9E9E9E</color>

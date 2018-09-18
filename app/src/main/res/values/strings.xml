@@ -9,9 +9,7 @@
     <string name="score_description">Score:</string>
 
     <string name="action_help">Help</string>
-    <string name="help_description">
-        - Enter letters from top to bottom.\n- Enter letters from left to right.\n- Enter \"Q\" instead of \"QU\".\n- No need to use spaces or commas.\n- Press the search button beside each word for a definition.\n- Check the box beside a word to add to your score.\n- Click a word to see it on the board.
-    </string>
+    <string name="help_description">Enter letters from top to bottom.\n\n Enter letters from left to right.\n\n Enter \"Q\" instead of \"QU\".\n\n No need to use spaces or commas.\n\n Press the search button beside each word for a definition.\n\n Check the box beside a word to add to your score.\n\n Click a word to see it on the board.</string>
     <string name="dismiss_dialog_content_description">Dismiss help dialog</string>
     <string name="total_score_description">Total Score:</string>
     <string name="zero_string">0</string>

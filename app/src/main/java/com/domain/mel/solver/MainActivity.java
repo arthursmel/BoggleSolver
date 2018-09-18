@@ -38,19 +38,39 @@ public class MainActivity extends AppCompatActivity {
         this.mainEditText = findViewById(R.id.mainEditText);
         this.boardView = findViewById(R.id.board);
 
+        Board b;
+        try {
+            final String input = "nbweefghijklmnoqu";
+
+
+            b = new Board(input);
+            boardView.update(b);
+
+            final Solver s = new Solver(this);
+
+            final Board.CoOrd[] path = s.getCoOrdPath(input,"knife");
+
+            this.fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    try {
+                        s.getAllWords(input);
+                    } catch (Exception e){}
+
+                    boardView.highlightWord(path);
+
+                }
+            });
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         // Hide keyboard, prevent edit text from forcing keyboard open on start
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
-        this.fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                try {
-                    Board b = new Board("abcdefghijklmnoqu");
-                    boardView.update(b);
-                } catch (Exception e) {}
 
-            }
-        });
 
     }
 
@@ -66,7 +86,6 @@ public class MainActivity extends AppCompatActivity {
         // Handle action bar item clicks here.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_help) {
             this.createHelpDialog();
             return true;

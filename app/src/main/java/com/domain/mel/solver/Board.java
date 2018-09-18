@@ -193,8 +193,8 @@ public class Board implements Iterable<Dice> {
      */
     public static class CoOrd {
 
-        final int row;
-        final int col;
+        public final int row;
+        public final int col;
 
         /**
          * Constructor for a CoOrd
@@ -204,6 +204,10 @@ public class Board implements Iterable<Dice> {
         CoOrd(int row, int col) {
             this.row = row;
             this.col = col;
+        }
+
+        public int toIndex() {
+            return this.col + (this.row * DIMENSION);
         }
 
         @Override

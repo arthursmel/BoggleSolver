@@ -13,6 +13,7 @@ import android.util.TypedValue;
 import android.view.View;
 
 import com.domain.mel.solver.Board;
+import com.domain.mel.solver.R;
 
 import java.util.ArrayList;
 
@@ -21,8 +22,10 @@ public class BoardView extends View {
 
     private static final String TAG = "BoardView";
     private static final int PADDING = 5;
+    private static final int BORDER_PADDING = 10;
     private Paint paint;
     private ArrayList<Rect> dices;
+    private boolean[] isHighlightedLetter;
     private String[] letters;
     private int size;
 
@@ -59,6 +62,7 @@ public class BoardView extends View {
         this.paint = new Paint();
         this.dices = new ArrayList<>();
         this.letters = new String[Board.DIMENSION * Board.DIMENSION];
+        this.isHighlightedLetter = new boolean[this.letters.length];
 
         for (int diceCount = 0; diceCount < (Board.DIMENSION * Board.DIMENSION); diceCount++) {
             this.dices.add(new Rect());
@@ -82,9 +86,12 @@ public class BoardView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
 
         int padding = (int) this.dpToPixels(PADDING);
-        int paddingEdge = padding / 2;
+        int paddingBorder = (int) this.dpToPixels(BORDER_PADDING) / 2;
+
+        Rect curDice;
         int diceSize = this.size / Board.DIMENSION;
         int diceRow;
         int diceCol;
@@ -94,11 +101,6 @@ public class BoardView extends View {
         int textSize = (int) this.dpToPixels(
                 (this.size / (Board.DIMENSION * Board.DIMENSION))
         );
-        Rect curDice;
-
-
-        Log.d(TAG, "Size " + diceSize);
-        super.onDraw(canvas);
 
         for (int i = 0; i < (Board.DIMENSION * Board.DIMENSION); i++) {
 
@@ -108,38 +110,50 @@ public class BoardView extends View {
             curDice = dices.get(i);
 
             curDice.top = (diceRow * diceSize) +
-                    ((diceRow == 0) ? paddingEdge : padding);
+                    ((diceRow == 0) ? paddingBorder : padding);
             curDice.bottom = (diceRow * diceSize) + diceSize -
-                    ((diceRow == Board.DIMENSION - 1) ? paddingEdge : 0);
+                    ((diceRow == Board.DIMENSION - 1) ? paddingBorder : 0);
 
             curDice.left = (diceCol * diceSize) +
-                    ((diceCol == 0) ? paddingEdge : padding);
+                    ((diceCol == 0) ? paddingBorder : padding);
             curDice.right = (diceCol * diceSize) + diceSize -
-                    ((diceCol == Board.DIMENSION - 1) ? paddingEdge : 0);
+                    ((diceCol == Board.DIMENSION - 1) ? paddingBorder : 0);
 
             this.paint.setColor(Color.LTGRAY);
             canvas.drawRect(curDice, this.paint);
 
             if (this.letters[i] != null ) {
-                this.paint.setColor(Color.BLACK);
+
+                if (this.isHighlightedLetter[i])
+                    this.paint.setColor(getResources().getColor(R.color.colorAccent));
+                else
+                    this.paint.setColor(Color.BLACK);
+
                 this.paint.setTextSize(textSize);
                 this.paint.setTextAlign(Paint.Align.CENTER);
-                canvas.drawText(this.letters[i],
+                canvas.drawText(this.letters[i].toUpperCase(),
                         curDice.centerX(),
-                        curDice.bottom - (curDice.height() / 3),
+                        curDice.bottom - (curDice.height() / 4),
                         this.paint);
             }
 
         }
 
-
     }
 
     public void update(Board board) {
         this.letters = board.toStringArray();
+        this.isHighlightedLetter = new boolean[this.letters.length];
         invalidate();
     }
 
+    public void highlightWord(Board.CoOrd[] coOrds) {
+        for (Board.CoOrd coOrd : coOrds) {
+            this.isHighlightedLetter[coOrd.toIndex()] = true;
+            Log.d(TAG, coOrd.toIndex() + " - " );
+        }
+        invalidate();
+    }
 
 
 }
