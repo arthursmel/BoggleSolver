@@ -8,7 +8,6 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 
@@ -17,6 +16,9 @@ import com.domain.mel.solver.R;
 
 import java.util.ArrayList;
 
+/**
+ *
+ */
 
 public class BoardView extends View {
 

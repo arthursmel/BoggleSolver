@@ -1,6 +1,8 @@
 package com.domain.mel.solver;
 
 import android.app.Dialog;
+import android.os.PersistableBundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -13,8 +15,11 @@ import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.domain.mel.solver.views.BoardView;
+
+import java.io.IOException;
 
 
 /**
@@ -31,6 +36,10 @@ public class MainActivity extends AppCompatActivity {
     private FloatingActionButton fab;
     private BoardView boardView;
 
+    private Solver solver;
+
+    Thread createSolverThread;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,11 +49,57 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         this.fab = findViewById(R.id.fab);
+        this.fab.hide();
+        this.fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try {
+                    solver.getAllWords("nbweefghijklmnoqu");
+                } catch (Board.InvalidBoardException e) {
+                    Toast.makeText(getApplicationContext(),
+                            "Invalid Dictionary File",
+                            Toast.LENGTH_SHORT)
+                            .show();
+                }
+            }
+        });
+
         this.mainListView = findViewById(R.id.mainListView);
         this.mainEditText = findViewById(R.id.mainEditText);
         this.boardView = findViewById(R.id.board);
 
-        Board b;
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    solver = new Solver(getApplicationContext());
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            fab.show();
+                        }
+                    });
+
+                } catch (IOException e) {
+                    Toast.makeText(getApplicationContext(),
+                            "Unreadable Dictionary File",
+                            Toast.LENGTH_SHORT)
+                            .show();
+                } catch (Dictionary.InvalidDictionaryException e) {
+                    Toast.makeText(getApplicationContext(),
+                            "Invalid Dictionary File",
+                            Toast.LENGTH_SHORT)
+                            .show();
+                }
+            }
+        }).start();
+
+
+
+
+
+        /*
         try {
             final String input = "nbweefghijklmnoqu";
 
@@ -57,22 +112,24 @@ public class MainActivity extends AppCompatActivity {
             final Board.CoOrd[] path = s.getCoOrdPath(input,"qulhewfj");
             boardView.highlightWord(path);
 
-            this.fab.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
 
-
-
-
-                }
-            });
 
         } catch (Exception e) {
             e.printStackTrace();
-        }
+        }*/
 
         // Hide keyboard, prevent edit text from forcing keyboard open on start
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+
+
+
+    }
+
+
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
 
 
 
