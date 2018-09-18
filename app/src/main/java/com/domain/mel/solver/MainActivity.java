@@ -16,6 +16,12 @@ import android.widget.ListView;
 
 import com.domain.mel.solver.views.BoardView;
 
+
+/**
+ * TODO score of words
+ * TODO List adapter
+ * TODO asynctask for solving
+ */
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
@@ -48,17 +54,15 @@ public class MainActivity extends AppCompatActivity {
 
             final Solver s = new Solver(this);
 
-            final Board.CoOrd[] path = s.getCoOrdPath(input,"knife");
+            final Board.CoOrd[] path = s.getCoOrdPath(input,"qulhewfj");
+            boardView.highlightWord(path);
 
             this.fab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
 
-                    try {
-                        s.getAllWords(input);
-                    } catch (Exception e){}
 
-                    boardView.highlightWord(path);
+
 
                 }
             });

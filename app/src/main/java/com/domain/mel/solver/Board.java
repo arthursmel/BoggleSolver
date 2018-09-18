@@ -130,7 +130,7 @@ public class Board implements Iterable<Dice> {
             return null;
         // Otherwise return the relative 1D position of the
         // dice object in the board ArrayList of dice
-        return this.dices.get((coOrd.row * DIMENSION) + coOrd.col);
+        return this.dices.get(coOrd.toIndex());
     }
 
     /**
@@ -206,6 +206,10 @@ public class Board implements Iterable<Dice> {
             this.col = col;
         }
 
+        /**
+         *
+         * @return
+         */
         public int toIndex() {
             return this.col + (this.row * DIMENSION);
         }
