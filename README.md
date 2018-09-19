@@ -1,6 +1,7 @@
 # BoggleSolver
-
+----
 ![Screenshot portrait](https://github.com/arthursmel/BoggleSolver/blob/master/screenshots/1.png "Screenshot portrait")
+----
 ![Screenshot Landscape](https://github.com/arthursmel/BoggleSolver/blob/master/screenshots/2.png "Screenshot Landscape")
 
 
