@@ -34,8 +34,8 @@ public class Board implements Iterable<Dice> {
 
         this.dices = new ArrayList<>(); // Initialising empty board of dice
         char[] boardLettersArr = boardLetters
-                .replaceAll("qu", Dice.QU_REPLACEMENT)
-                // Replacing all instances of the 'qu' dice with '.'
+                .replaceAll("q", Dice.QU_REPLACEMENT)
+                // Replacing all instances of the 'q' dice with '.'
                 // in order to keep type as char
                 .toCharArray(); // Converting string to an array of chars
 
