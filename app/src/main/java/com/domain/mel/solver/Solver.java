@@ -20,6 +20,12 @@ public class Solver {
     private static final int MINIMUM_WORD_LETTER_COUNT = 3;
     private Dictionary dictionary;
 
+    private static final int ERROR_SCORE = -1;
+    private static final int THREE_FOUR_LETTER_SCORE = 1;
+    private static final int FIVE_LETTER_SCORE = 2;
+    private static final int SIX_LETTER_SCORE = 3;
+    private static final int MAX_WORD_SCORE = 5;
+
     /**
      * Constructor
      * @param context needed for the dictionary
@@ -227,6 +233,52 @@ public class Solver {
         }
         // Convert array list to array
         return coOrds.toArray(new Board.CoOrd[coOrds.size()]);
+    }
+
+    /**
+     *
+     *
+     */
+    public static Integer[] getWordScores(String[] words) {
+        ArrayList<Integer> scores = new ArrayList<>();
+        int wordLength;
+
+        for (String word : words) {
+
+            wordLength = word.length();
+            if (wordLength < MINIMUM_WORD_LETTER_COUNT) {
+                scores.add(ERROR_SCORE);
+            } else {
+                switch (word.length()) {
+                    case 3:
+                    case 4:
+                        scores.add(THREE_FOUR_LETTER_SCORE);
+                        break;
+                    case 5:
+                        scores.add(FIVE_LETTER_SCORE);
+                        break;
+                    case 6:
+                        scores.add(SIX_LETTER_SCORE);
+                        break;
+                    default:
+                        scores.add(MAX_WORD_SCORE);
+                }
+            }
+
+        }
+        return scores.toArray(new Integer[scores.size()]);
+    }
+
+    /**
+     *
+     */
+    public static int getTotalScore(String[] words) {
+        int result = 0;
+        Integer[] scores = getWordScores(words);
+        for (Integer score : scores) {
+            result += score;
+        }
+        return result;
     }
 
 }

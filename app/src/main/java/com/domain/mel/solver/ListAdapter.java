@@ -23,13 +23,13 @@ public class ListAdapter extends ArrayAdapter<String> {
 
     private Context context;
     private String[] foundWords;
-    private int[] foundWordsScores;
+    private Integer[] foundWordsScores;
     private ListAdapterListener listener;
     private boolean[] selectedFoundWords;
 
     public ListAdapter(Context context,
                        String[] foundWords,
-                       int[] foundWordsScores,
+                       Integer[] foundWordsScores,
                        ListAdapterListener listener) {
         super(context, R.layout.list_row, foundWords);
 
@@ -65,7 +65,7 @@ public class ListAdapter extends ArrayAdapter<String> {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        viewHolder.wordScoreTextView.setText("0");
+        viewHolder.wordScoreTextView.setText(String.valueOf(foundWordsScores[position]));
         viewHolder.foundWordTextView.setText(this.foundWords[position]);
         viewHolder.checkBox.setId(position);
         viewHolder.checkBox.setChecked(this.selectedFoundWords[position]);
@@ -87,7 +87,15 @@ public class ListAdapter extends ArrayAdapter<String> {
         viewHolder.checkBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                listener.onCheck(position);
+
+                CheckBox checkBox = (CheckBox) view;
+                int id = checkBox.getId();
+
+                checkBox.setChecked(!selectedFoundWords[id]);
+                selectedFoundWords[id] = !selectedFoundWords[id];
+
+                listener.onCheck(id, selectedFoundWords[id]);
+
             }
         });
 
@@ -105,7 +113,7 @@ public class ListAdapter extends ArrayAdapter<String> {
     public interface ListAdapterListener {
         void onSearch(int position);
         void onClick(int position);
-        void onCheck(int position);
+        void onCheck(int position, boolean isSelected);
     }
 
 }

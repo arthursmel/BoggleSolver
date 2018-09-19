@@ -23,6 +23,7 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TableLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.domain.mel.solver.views.BoardView;
@@ -46,13 +47,18 @@ public class MainActivity extends AppCompatActivity {
     private EditText mainEditText;
     private FloatingActionButton fab;
     private BoardView boardView;
+    private TextView userScoreTextView;
+    private TextView totalScoreTextView;
+    private TextView totalWordsTextView;
 
     private Solver solver;
     private Board board;
     private String input;
 
     private String[] foundWords;
-    private int[] foundWordsScore;
+    private Integer[] foundWordsScore;
+
+    private int userScore;
 
 
     Thread createSolverThread;
@@ -64,6 +70,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        this.userScoreTextView = findViewById(R.id.userScoreTextView);
+        this.totalScoreTextView = findViewById(R.id.totalScoreTextView);
+        this.totalWordsTextView = findViewById(R.id.totalWordsTextView);
 
         this.mainListView = findViewById(R.id.mainListView);
         this.mainEditText = findViewById(R.id.mainEditText);
@@ -95,11 +105,14 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onCheck(int position) {
-                Log.d(TAG, "onCheck");
+            public void onCheck(int position, boolean isSelected) {
+
+                int wordScore = foundWordsScore[position];
+                userScore += (isSelected) ? wordScore : -wordScore;
+                userScoreTextView.setText(String.valueOf(userScore));
+
             }
         };
-
 
         this.fab.hide();
         this.fab.setOnClickListener(new View.OnClickListener() {
@@ -117,13 +130,19 @@ public class MainActivity extends AppCompatActivity {
 
                     boardView.update(board);
                     foundWords = solver.getAllWords(input);
+                    foundWordsScore = Solver.getWordScores(foundWords);
+
+                    totalWordsTextView.setText(String.valueOf(foundWords.length));
+                    totalScoreTextView.setText(String.valueOf(Solver.getTotalScore(foundWords)));
 
                     mainListView.setAdapter(
                             new ListAdapter(getApplicationContext(),
                                     foundWords,
-                                    new int[foundWords.length],
+                                    foundWordsScore,
                                     listViewListener)
                     );
+
+
 
 
                 } catch (Board.InvalidBoardException e) {
