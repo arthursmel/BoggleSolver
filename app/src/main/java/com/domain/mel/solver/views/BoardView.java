@@ -17,7 +17,7 @@ import com.domain.mel.solver.R;
 import java.util.ArrayList;
 
 /**
- *
+ * A custom view to represent the boggle board graphically
  */
 
 public class BoardView extends View {
