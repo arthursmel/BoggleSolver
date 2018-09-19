@@ -1,6 +1,5 @@
 package com.domain.mel.solver;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -22,7 +21,6 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
-import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,11 +29,6 @@ import com.domain.mel.solver.views.BoardView;
 import java.io.IOException;
 
 
-/**
- * TODO score of words
- * TODO List adapter
- * TODO asynctask for solving
- */
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
@@ -60,8 +53,6 @@ public class MainActivity extends AppCompatActivity {
 
     private int userScore;
 
-
-    Thread createSolverThread;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -183,49 +174,11 @@ public class MainActivity extends AppCompatActivity {
             }
         }).start();
 
-
-
-
-
-
-
-
-
-        /*
-        try {
-            final String input = "nbweefghijklmnoqu";
-
-
-            b = new Board(input);
-            boardView.update(b);
-
-            final Solver s = new Solver(this);
-
-            final Board.CoOrd[] path = s.getCoOrdPath(input,"qulhewfj");
-            boardView.highlightWord(path);
-
-
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }*/
-
         // Hide keyboard, prevent edit text from forcing keyboard open on start
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
-
-
     }
 
-
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-
-
-
-    }
 
     @Override
     public boolean onCreateOptionsMenu (Menu menu) {
@@ -350,10 +303,6 @@ public class MainActivity extends AppCompatActivity {
         mainEditText.setLayoutParams(mainEditTextLayoutParams);
         infoWrapper.setLayoutParams(infoWrapperLayoutParams);
         mainListView.setLayoutParams(mainListViewLayoutParams);
-
     }
-
-
-
 
 }
