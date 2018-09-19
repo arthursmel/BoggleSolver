@@ -15,18 +15,30 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 /**
- *
+ * List adapter that displays the found words
+ * the score of the word, and a link to search
+ * the work for the definition
  */
 public class ListAdapter extends ArrayAdapter<String> {
 
     private static final String TAG = "ListAdapter";
 
     private Context context;
+    // The array of found words by the solver
     private String[] foundWords;
+    // The array of the corresponding scores
     private Integer[] foundWordsScores;
     private ListAdapterListener listener;
+    // Represents which words have been selected by the checkbox
     private boolean[] selectedFoundWords;
 
+    /**
+     * Constructor
+     * @param context
+     * @param foundWords
+     * @param foundWordsScores
+     * @param listener
+     */
     public ListAdapter(Context context,
                        String[] foundWords,
                        Integer[] foundWordsScores,
