@@ -150,10 +150,10 @@ public class Solver {
     private void DFSAllWords(Board board, Dice curDice, Stack<Dice> curWordPath, ArrayList<String> foundWords) {
 
         String nextWord;
-        // Converting current stack to the corresponding current word
-        String curWord = stackToWord(curWordPath);
         // Push current dice to the stack
         curWordPath.push(curDice);
+        // Converting current stack to the corresponding current word
+        String curWord = stackToWord(curWordPath);
 
         if (this.dictionary.isWord(curWord) &&
                 !foundWords.contains(curWord) &&
@@ -164,13 +164,14 @@ public class Solver {
 
         for (Dice nextDice : board.getAdjacentDice(curDice)) {
             // For each dice in the dices adjacent to the current dice
-            nextWord = curWord + curDice.getLetter();
+            nextWord = curWord + nextDice.getLetter();
             // Add the dice letter to the current partial word
 
-            if (!curWordPath.contains(nextDice) && this.dictionary.isPartialWord(nextWord))
+            if (!curWordPath.contains(nextDice) && this.dictionary.isPartialWord(nextWord)){
+
                 // If the next dice has not already been used to create the current word,
                 // and the current word is a possible valid word, DFS from the next dice
-                this.DFSAllWords(board, nextDice, curWordPath, foundWords);
+                this.DFSAllWords(board, nextDice, curWordPath, foundWords);}
 
         }
 
