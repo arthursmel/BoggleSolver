@@ -236,8 +236,9 @@ public class Solver {
     }
 
     /**
-     *
-     *
+     * @param words the found words on the board
+     * @return the respective score of the found words on the board
+     * or -1 if the word is invalid
      */
     public static Integer[] getWordScores(String[] words) {
         ArrayList<Integer> scores = new ArrayList<>();
@@ -270,7 +271,8 @@ public class Solver {
     }
 
     /**
-     *
+     * @return the max score possible (if user found all
+     * valid words)
      */
     public static int getTotalScore(String[] words) {
         int result = 0;

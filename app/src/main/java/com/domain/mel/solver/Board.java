@@ -58,8 +58,7 @@ public class Board implements Iterable<Dice> {
     }
 
     /**
-     *
-     * @return
+     * @return The array representation of the dice letters on the board
      */
     public String[] toStringArray() {
         ArrayList<String> result = new ArrayList<>();
@@ -207,8 +206,7 @@ public class Board implements Iterable<Dice> {
         }
 
         /**
-         *
-         * @return
+         * @return the 1D index of the co-ord
          */
         public int toIndex() {
             return this.col + (this.row * DIMENSION);

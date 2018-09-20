@@ -33,9 +33,12 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
 
+    // Resizing the board in landscape
     private static final int BOARD_WIDTH_DP_LANDSCAPE = 200;
+    // The dictionary used to search the words
     private static final String DICTIONARY_URL = "http://www.dictionary.com/browse/";
 
+    // GUI objects
     private ListView mainListView;
     private EditText mainEditText;
     private FloatingActionButton fab;
@@ -51,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
     private String[] foundWords;
     private Integer[] foundWordsScore;
 
+    // The score of the words the user has selected
     private int userScore;
 
 
@@ -74,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
         final ListAdapter.ListAdapterListener listViewListener = new ListAdapter.ListAdapterListener() {
             @Override
             public void onSearch(int position) {
+                // When the search button of a word has been clicked
                 // Open browser with definition of the word clicked
                 Intent browserIntent = new Intent(Intent.ACTION_VIEW,
                         Uri.parse(DICTIONARY_URL + foundWords[position]));
@@ -82,8 +87,9 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onClick(int position) {
-
+                // When the list item of a word has been clicked
                 try {
+                    // Display the path of the word on the board
                     Board.CoOrd[] coOrds = solver.getCoOrdPath(input, foundWords[position]);
                     boardView.highlightWord(coOrds);
                 } catch (Board.InvalidBoardException exception) {
@@ -92,16 +98,17 @@ public class MainActivity extends AppCompatActivity {
                             Toast.LENGTH_SHORT)
                             .show();
                 }
-
             }
 
             @Override
             public void onCheck(int position, boolean isSelected) {
-
-                int wordScore = foundWordsScore[position];
+                // When the word list item has been selected
+                int wordScore = foundWordsScore[position]; // Get the score of the word
+                // Add or subtract this score depending whether item is
+                // being selected or deselected
                 userScore += (isSelected) ? wordScore : -wordScore;
+                // Update user score text view
                 userScoreTextView.setText(String.valueOf(userScore));
-
             }
         };
 
@@ -110,10 +117,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 try {
-
                     // Hides keyboard automatically when fab clicked
                     hideKeyboard();
 
+                    // Get the user input
                     input = mainEditText.getText()
                             .toString()
                             .toLowerCase();
@@ -126,16 +133,13 @@ public class MainActivity extends AppCompatActivity {
                     totalWordsTextView.setText(String.valueOf(foundWords.length));
                     totalScoreTextView.setText(String.valueOf(Solver.getTotalScore(foundWords)));
 
+                    // Update the list with the found words and their respective scores
                     mainListView.setAdapter(
                             new ListAdapter(getApplicationContext(),
                                     foundWords,
                                     foundWordsScore,
                                     listViewListener)
                     );
-
-
-
-
                 } catch (Board.InvalidBoardException e) {
                     e.printStackTrace();
                     Toast.makeText(getApplicationContext(),
@@ -151,25 +155,42 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 try {
+                    // Initialise solver
                     solver = new Solver(getApplicationContext());
 
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            // When the solver has been initialised,
+                            // show the fab button to prevent user
+                            // solving board before solver created
                             fab.show();
                         }
                     });
-
                 } catch (IOException e) {
-                    Toast.makeText(getApplicationContext(),
-                            "Unreadable Dictionary File",
-                            Toast.LENGTH_SHORT)
-                            .show();
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getApplicationContext(),
+                                    "Unreadable Dictionary File",
+                                    Toast.LENGTH_SHORT)
+                                    .show();
+                        }
+                    });
+                    e.printStackTrace();
                 } catch (Dictionary.InvalidDictionaryException e) {
-                    Toast.makeText(getApplicationContext(),
-                            "Invalid Dictionary File",
-                            Toast.LENGTH_SHORT)
-                            .show();
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getApplicationContext(),
+                                    "Invalid Dictionary File",
+                                    Toast.LENGTH_SHORT)
+                                    .show();
+                        }
+                    });
+                    e.printStackTrace();
                 }
             }
         }).start();
@@ -193,6 +214,7 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_help) {
+            // Help button has been clicked
             this.createHelpDialog();
             return true;
         }
@@ -200,6 +222,11 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Displays the help dialog to be displayed when
+     * the user presses the help menu button
+     * Displays information about how to use the app
+     */
     public void createHelpDialog() {
 
         final Dialog dialog = new Dialog(this);
@@ -209,6 +236,7 @@ public class MainActivity extends AppCompatActivity {
         helpDismissButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Dismiss button has been clicked
                 dialog.dismiss();
             }
         });
@@ -216,6 +244,9 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Hide the soft keyboard
+     */
     public void hideKeyboard() {
         InputMethodManager inputManager = (InputMethodManager)
                 getSystemService(Context.INPUT_METHOD_SERVICE);

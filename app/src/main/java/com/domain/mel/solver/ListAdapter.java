@@ -34,10 +34,11 @@ public class ListAdapter extends ArrayAdapter<String> {
 
     /**
      * Constructor
-     * @param context
-     * @param foundWords
-     * @param foundWordsScores
-     * @param listener
+     * @param context context
+     * @param foundWords the words found by the solver
+     * @param foundWordsScores the respective scores of the words
+     * @param listener used to listen for check box clicks, list item
+     *                 clicks, search button clicks, for each word
      */
     public ListAdapter(Context context,
                        String[] foundWords,
@@ -55,7 +56,6 @@ public class ListAdapter extends ArrayAdapter<String> {
     @NonNull
     @Override
     public View getView(final int position, @Nullable View convertView, @NonNull ViewGroup parent) {
- //       super.getView(position, convertView, parent);
 
         ViewHolder viewHolder;
         LayoutInflater inflater = LayoutInflater.from(this.context);
@@ -103,6 +103,7 @@ public class ListAdapter extends ArrayAdapter<String> {
                 CheckBox checkBox = (CheckBox) view;
                 int id = checkBox.getId();
 
+                // Update the item's selected state
                 checkBox.setChecked(!selectedFoundWords[id]);
                 selectedFoundWords[id] = !selectedFoundWords[id];
 
