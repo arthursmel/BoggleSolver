@@ -102,7 +102,9 @@ public class Solver {
             curPath.push(curDice); // Push dice to path
             for (Dice dice : board.getAdjacentDice(curDice))
                 // DFS adjacent dice to current dice
-                this.DFSWordPath(board, dice, word, curPath, path);
+                if (!curPath.contains(dice))
+                    // Preventing same dice being used twice in the one word
+                    this.DFSWordPath(board, dice, word, curPath, path);
 
             curPath.pop(); // Pop current dice, onto next dice
         }
