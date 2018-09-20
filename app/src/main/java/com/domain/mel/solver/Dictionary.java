@@ -1,6 +1,7 @@
 package com.domain.mel.solver;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -25,7 +26,7 @@ public class Dictionary {
     private static final String DICT_FILE_NAME = "dict.txt";
     private static final char POP_STACK = '.'; // char used to symbolise stack pop
     // char used to symbolise the end of a word
-    private static final char END_OF_WORD = (char) 13;
+    private static final char END_OF_WORD = '\n';
     /* Possible search outcomes for words that have been searched
     BOTH => the word exists in the dictionary, and may also be the beginning of another word
     MATCH => the word exists in the dictionary, the word is not part of the beginning of any other word
@@ -62,8 +63,8 @@ public class Dictionary {
                 curNode = new TrieNode((char) curChar);
                 stack.push(curNode);
                 prevNode.children.add(curNode);
-
-            } else if ((char) curChar == POP_STACK) {
+            }
+            else if ((char) curChar == POP_STACK) {
                 // If the current character indicates to pop the stack
                 if (curNode == ROOT)
                     // Can't pop stack if there's nothing on it
@@ -80,7 +81,8 @@ public class Dictionary {
                 curNode.addChild(new TrieNode());
 
             } else {
-                // Otherwise invalid character
+
+                 //Otherwise invalid character
                 throw new InvalidDictionaryException("Invalid Character in dictionary file: " + (char) curChar);
             }
 
@@ -230,6 +232,19 @@ public class Dictionary {
          * ArrayList if there are no children */
         ArrayList<TrieNode> getChildren() {
             return this.children;
+        }
+
+        /** @return the string representation of the node */
+        @Override
+        public String toString() {
+            StringBuilder str = new StringBuilder();
+            str.append(this.letter);
+            str.append("-[");
+            for (TrieNode n : this.children) {
+                str.append(n.getLetter());
+                str.append(" ");
+            }
+            return str.toString() + "]";
         }
 
     }
